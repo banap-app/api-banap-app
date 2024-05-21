@@ -1,5 +1,6 @@
 from PIL import Image
 from io import BytesIO
+from base64 import b64encode
 from dataclasses import dataclass
 from ...Application.adapters import RotationAdapter
 
@@ -14,5 +15,6 @@ class RotationImageAdapter(RotationAdapter):
         byte_io = BytesIO()
         rotated_image.save(byte_io, 'JPEG')
         byte_io.seek(0)
-        return byte_io
+        byte_str = b64encode(byte_io.read()).decode('utf-8')
+        return byte_str
         

@@ -9,5 +9,6 @@ class ImageRotateController(BaseController):
         return super().get()
     
     def post(self):
-        input_params = RotateImageUseCase.Input(**(request.files['image'], request.form.get('angle', 0)))
-        self.use_case.execute(input_params)
+        input_params = RotateImageUseCase.Input(image_path=request.files['image'], angle=request.form.get('angle', 0))
+        output = self.use_case.execute(input_params)
+        return output

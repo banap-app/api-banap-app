@@ -1,6 +1,7 @@
 from dataclasses import dataclass
 from io import BytesIO
 from .adapters import RotationAdapter
+from ..Domain.entites import ImageRotate
 from ...__seedwork.Application.usecase import UseCase
 
 
@@ -18,5 +19,6 @@ class RotateImageUseCase(UseCase):
         byte_io_image: BytesIO
     
     def execute(self, input_boundary: 'Input'):
-        output = self.rotatation_adapter.rotation(input_boundary.image_path, input_boundary.angle)
+        image_for_rotate = ImageRotate(input_boundary.image_path, 0, 0)
+        output = self.rotatation_adapter.rotation(input_boundary.image_path, float(input_boundary.angle))
         return self.Output(byte_io_image=output)

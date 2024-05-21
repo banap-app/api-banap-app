@@ -1,12 +1,22 @@
 import sys, os
-from src.rotate_image.Domain.entites import ImageRotate
-current_script_path = os.path.realpath(__file__)
+from flask import Flask, jsonify
+from src.rotate_image.Infra.Http.Api.ImageRotateController import ImageRotateController
+from src.rotate_image.Application.usecases import RotateImageUseCase
+from src.rotate_image.Infra.Adapters.RotationImageAdapter import RotationImageAdapter
 
-# Obtém o diretório do script atual
+current_script_path = os.path.realpath(__file__)
 current_directory = os.path.dirname(current_script_path)
 sys.path.append(current_directory)
 
-image = ImageRotate('/teste', 12,12)
+app = Flask(__name__)
 
-print(image.to_dict())
+@app.route('/send_image', methods=['POST'])
+def send_image():
+    rotation_service = RotationImageAdapter()
+    usecase = RotateImageUseCase(rotation_service)
+    controller = ImageRotateController(usecase)
+    output = controller.post()
+    return jsonify({'image': output.byte_io_image})
 
+if __name__ ==  '__main__':
+    app.run(debug=True, host='0.0.0.0', port=5000)
