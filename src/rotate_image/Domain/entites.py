@@ -1,7 +1,8 @@
 from dataclasses import dataclass
+from ...__seedwork.Domain.entity import Entity
 
 @dataclass(frozen=True, slots=True)
-class ImageRotate():
+class ImageRotate(Entity):
     """
     Rotate an image by a given angle.
     """
@@ -13,8 +14,6 @@ class ImageRotate():
     def __post_init__(self):
         object.__setattr__(self, 'centro', (self.largura / 2, self.altura / 2))
     
-    
 
-image = ImageRotate('a', 12,12)
 
 
