@@ -1,18 +1,19 @@
-import psycopg2
-from psycopg2 import sql
 from uuid import UUID
 from typing import List
-from ...Domain.entities import Analysis
-from ...Application.adapters import NpkAnalisysRepository
+from .....Domain.entities import Analysis
+from .....Application.adapters import NpkAnalisysRepository
+from ....Database.postgresql_connection import PostgresqlConnection
 
 class NpkAnalisysRepositoryPostgresql(NpkAnalisysRepository):
     """
     PostgreSQL implementation of NpkAnalisysRepository.
     """
-    def __init__(self, connection_string: str):
-        # Inicializa a conexão com o banco de dados PostgreSQL
-        self.connection = psycopg2.connect(connection_string)
-        self.cursor = self.connection.cursor()
+    def __init__(self, connection: PostgresqlConnection):
+        """
+        Inicializa a instância com a conexão do PostgreSQL.
+        """
+        self.connection = connection
+        self.cursor = self.connection.cursor  # Usando o cursor da conexão
 
     def add(self, analysis: Analysis):
         """
@@ -25,13 +26,13 @@ class NpkAnalisysRepositoryPostgresql(NpkAnalisysRepository):
             """
             self.cursor.execute(query, (
                 str(analysis.id),
-                str(analysis.id_field),
+                str(analysis.idField),
                 analysis.result,
                 analysis.created_at
             ))
-            self.connection.commit()
+            self.connection.commit()  # Realiza o commit da transação
         except Exception as e:
-            self.connection.rollback()
+            self.connection.rollback()  # Reverte a transação em caso de erro
             print(f"Failed to add analysis: {e}")
             raise e
 
@@ -64,6 +65,10 @@ class NpkAnalisysRepositoryPostgresql(NpkAnalisysRepository):
             raise e
 
     def __del__(self):
-        # Fecha a conexão quando o objeto for destruído
-        self.cursor.close()
-        self.connection.close()
+        """
+        Garante que o cursor e a conexão sejam fechados ao destruir o objeto.
+        """
+        if hasattr(self, 'cursor') and self.cursor:
+            self.cursor.close()
+        if hasattr(self, 'connection') and self.connection:
+            self.connection.close()

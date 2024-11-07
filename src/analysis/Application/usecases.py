@@ -14,6 +14,7 @@ class CreateNpkAnalisys(UseCase):
         phosphor: int
         potassium: int
         expected_productivity: int
+        id_field: UUID
 
     @dataclass(frozen=True, slots=True)
     class Output:
@@ -22,10 +23,11 @@ class CreateNpkAnalisys(UseCase):
         message: str
 
     def execute(self, input_boundary: 'Input'):
-        npk_analysis = Analysis(phosphor=input_boundary.phosphor, potassium=input_boundary.potassium,
+        npk_analysis = Analysis(idField=input_boundary.id_field,phosphor=input_boundary.phosphor, potassium=input_boundary.potassium,
                                 expectedProductivity=input_boundary.expected_productivity)
         try:
             npk_analysis.calculate_npk()
+            print(npk_analysis.to_dict())
             self.npk_analisys_repository.add(analysis=npk_analysis)
             return self.Output(npk_value=npk_analysis, success=True, message="NPK analysis created successfully")
         except Exception as e:

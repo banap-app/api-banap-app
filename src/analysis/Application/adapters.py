@@ -3,7 +3,7 @@ from abc import ABC, abstractmethod
 from uuid import UUID
 from ..Domain.entities import Analysis
 
-@dataclass(frozen=True, slots=True)
+@dataclass
 class NpkAnalisysRepository(ABC):
     """
     Abstract base class for NPK analysis repository.
@@ -17,3 +17,14 @@ class NpkAnalisysRepository(ABC):
         Returns all NPK analyses based on the provided idField.
         """
         raise NotImplementedError("Need to implement listAnalisys method.")
+    
+@dataclass(frozen=True)
+class IRouter(ABC):
+    
+    @abstractmethod
+    def add_route(self, path: str, controller_method):
+        pass
+
+    @abstractmethod
+    def handle_request(self, request):
+        pass
